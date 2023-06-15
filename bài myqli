@@ -1,0 +1,102 @@
+<?php
+    $servername = "localhost";
+    $database = "CUSTOMERS";
+    $username = "root";
+    $password = "";
+
+    $dbh = mysqli_connect($servername, $username, $password, $database);
+
+    if(!$dbh)
+        die("Unable to connect to MySQL: " . mysqli_error()); 
+        // Thông báo lỗi nếu kết nối thất bại 
+    if(!mysqli_select_db($dbh, 'my_personal'))     
+        die("Unable to select database: " . mysql_error()); 
+       // Thông báo lỗi nếu chọn CSDL thất bại
+    // Tạo bảng "customers", gồm các trường id, name, email và phone.
+    $sql_stmt = "CREATE TABLE IF NOT EXISTS CUSTOMERS(
+         ID int NOT NULL AUTO_INCREMENT,
+         Customername varchar(100) NOT NULL,
+         Email varchar(50) NOT NULL,
+         Phone char(10) NOT NULL,
+        PRIMARY KEY (ID)
+    )";
+    $result = mysqli_query($dbh, $sql_stmt);
+       // Thực thi câu lệnh SQL
+    
+    if (!$result){
+        die("Database access failed: " . mysqli_error()); 
+        // Thông báo lỗi nếu thực thi thất bại
+    }
+    else{
+       echo "Table has been add in your data"; 
+    };
+    // Thêm 5 khách hàng mới vào bảng "customers".
+    $sql_stmt = "INSERT INTO CUSTOMERS (ID, Customername, Email, Phone)"; 
+    $sql_stmt .= "VALUES('kh001','Nguyễn Trà My', 'my12@gmail.com','0956331234'),
+                    ('kh002','Bùi Tiến Dũng', 'Đungeptrai1@gmail.com','0384613579'),
+                    ('kh003','Nguyễn Thanh Trà', 'Tranguyen23@gmail.com','0952789347'),
+                    ('kh004','Cao Văn Thắng', 'Thangcao354@gmail.com','0345720179'),
+                    ('kh005','Lê thị Minh', 'Leminh589@gmail.com','0936782160')"; 
+
+    $result = mysqli_query($dbh, $sql_stmt); // Thực thi câu lệnh SQL
+
+    if (!$result) {
+    die("Adding record failed: " . mysqli_error()); 
+    // Thông báo lỗi nếu thực thi câu lệnh thất bại
+    } 
+    else {
+    echo "History transaction has been add in your data";
+    };
+
+    // Sửa thông tin của một khách hàng có id là 1.
+    $sql_stmt = "UPDATE 'CUSTOMERS' SET Customername = 'Nguyễn Thị Thanh Thảo'";
+    $sql_stmt .= "WHERE 'ID' = 'kh001'";
+    $result = mysqli_query($dbh,$sql_stmt);
+    if (!$result) {
+        die("Adding record failed: " . mysqli_error()); 
+        // Thông báo lỗi nếu thực thi câu lệnh thất bại
+    } else {
+        echo "History transaction has been update in your data";
+    };
+    // Xoá một khách hàng có id là 5.
+    $sql_stmt = "DELETE FROM CUSTOMERS WHERE 'ID' = 'kh005'"; 
+    $result = mysqli_query($dbh,$sql_stmt); 
+    if (!$result) {
+        die("Adding record failed: " . mysqli_error()); 
+        // Thông báo lỗi nếu thực thi câu lệnh thất bại
+    } else {
+        echo "History transaction has been delete in your data";
+    };
+    //Lấy tất cả các khách hàng có email là "example@gmail.com".
+    $sql_stmt = " SELECT * FROM CUSTOMERS WHERE email='example@gmail.com'";
+$result = mysqli_query($dbh,$sql_stmt); 
+    if (!$result) {
+        die("Adding record failed: " . mysqli_error()); 
+        // Thông báo lỗi nếu thực thi câu lệnh thất bại
+    } else {
+        echo "History transaction has been delete in your data";
+    };
+    //Tạo bảng "orders", gồm các trường id, customer_id, total_amount và order_date. (Thêm ràng buộc cho khoá ngoại delete cascade)
+    $sql_stmt = "CREATE TABLE IF NOT EXISTS ORDERS(
+          id char(10) PRIMARY KEY NOT null,
+          customer_id int  NOT null,
+          total_amount DECIMAL(10, 2) NOT null,
+          order_date DATE NOT null,
+          FOREIGN KEY(customer_id) REFERENCES CUSTOMERS(ID) ON DELETE CASCADE
+)";
+   $result = mysqli_query($dbh, $sql_stmt);
+      // Thực thi câu lệnh SQL
+   
+   if (!$result){
+       die("Database access failed: " . mysqli_error()); 
+       // Thông báo lỗi nếu thực thi thất bại
+   }
+   else{
+      echo "Table has been add in your data"; 
+   };
+    //Thêm một đơn hàng mới vào bảng "orders" cho khách hàng có id là 3.
+    $sql_stmt = " INSERT INTO ORDERS (id, customer_id, total_amount, order_date)
+    $sql_stmt .= "VALUES(1, 'kh003', 150.99, '2023-06-07');
+    //
+    mysqli_close($connection);
+?>
