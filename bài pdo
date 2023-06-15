@@ -7,7 +7,7 @@ $USER_PASSWORD = "";
 
 $conn = new PDO("$DB_TYPE:host=$DB_HOST;dbname=$DB_NAME", $USER_NAME, $USER_PASSWORD);
 
-// Create table
+// Tạo bảng "customers", gồm các trường id, name, email và phone.
 $stsm = $conn->prepare('CREATE TABLE IF NOT EXISTS CUSTOMERS (
      ID int NOT NULL AUTO_INCREMENT,
      Customername varchar(100) NOT NULL,
@@ -23,72 +23,72 @@ if (!$result) {
     echo "Table has been add in your data";
 };
 
-// Insert data
-$stsm = $conn->prepare('INSERT INTO `CUSTOMERS`(``, `hoten`, `Ngaysinh`, `Lop_hoc`, `Diem_TB`) 
-VALUE (?, ?, ?, ?, ?)');
-$data = array('SV001','Nguyen Van A', '2002-01-10', 'K56SD1', '9.5');
-$data2 = array('SV002','Nguyen Van B', '2002-02-10', 'K56SD1', '9.5');
-$data3 = array('SV003','Nguyen Van C', '2002-03-10', 'K56SD1', '9.5');
-$data4 = array('SV004','Nguyen Van D', '2002-04-10', 'K56SD1', '9.5');
-$data5 = array('SV005','Nguyen Van D', '2002-05-10', 'K56SD1', '9.5');
+// Thêm 5 khách hàng mới vào bảng "customers".
+$sql= " INSERT INTO CUSTOMERS (ID, Customername, Email, Phone) VALUE 
+    ('kh001','Nguyễn Trà My', 'my12@gmail.com','0956331234'),
+    ('kh002','Bùi Tiến Dũng', 'Đungeptrai1@gmail.com','0384613579'),
+    ('kh003','Nguyễn Thanh Trà', 'Tranguyen23@gmail.com','0952789347'),
+    ('kh004','Cao Văn Thắng', 'Thangcao354@gmail.com','0345720179'),
+    ('kh005','Lê thị Minh', 'Leminh589@gmail.com','0936782160')"; 
+    $conn->exec($sql);
+    echo "Thêm khách hàng thành công.<br>";
+// Sửa thông tin của một khách hàng có id là 1.
+    $sqlUpdate = "UPDATE CUSSTOMERS SET Customername = 'Nguyễn Ngọc Hà', email = 'Ha2002mail@example.com' WHERE ID = kh001";
+    $conn->exec($sqlUpdate);
+    echo "Thông tin khách hàng đã được cập nhật thành công.<br>";
 
-$result=$stsm-> execute($data);
-if (!$result) {
-    die("Adding record failed: " . mysqli_error()); 
-    // Thông báo lỗi nếu thực thi câu lệnh thất bại
+// Xoá một khách hàng có id là 5.
+    $sqlDelete = "DELETE FROM CUSTOMERS WHERE ID = kh005";
+    $conn->exec($sqlDelete);
+echo "Xoá khách hàng thành công.<br>";
+
+// Lấy tất cả các khách hàng có email là "example@gmail.com"
+$sqlSelect = "SELECT * FROM CUSTOMERS WHERE Email = 'example@gmail.com'";
+$result = $conn->query($sqlSelect);
+
+if ($result->rowCount() > 0) {
+    echo "Các khách hàng có email 'example@gmail.com':<br>";
+    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+        echo "ID: " . $row["ID"] . "<br>". "Name: " . $row["Customername"] . "<br>". "Email: " . $row["Email"] ."<br>". "Phone: " . $row["Phone"] . "<br>";
+    }
 } else {
-    echo "History transaction has been add in your data";
+    echo "Không tìm thấy khách hàng có email 'example@gmail.com'.<br>";
 }
-$result2=$stsm-> execute($data2);
-if (!$result2) {
-    die("Adding record failed: " . mysqli_error()); 
-    // Thông báo lỗi nếu thực thi câu lệnh thất bại
-} else {
-    echo "History transaction has been add in your data";
+// Tạo bảng "orders"
+$sql = "
+CREATE TABLE orders (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  customer_id INT,
+  total_amount DECIMAL(10, 2),
+  order_date DATE,
+  CONSTRAINT fk_customer_id FOREIGN KEY (customer_id) REFERENCES CUSTOMERS(ID) ON DELETE CASCADE
+)";
+$conn->exec($sql);
+
+// Thêm một đơn hàng mới vào bảng "orders" cho khách hàng có id là 3
+$sql = "INSERT INTO orders (customer_id, total_amount, order_date) VALUES (kh003, 70.50, NOW())";
+$conn->exec($sql);
+
+// Lấy tất cả các đơn hàng của khách hàng có id là 3
+$sql = "SELECT * FROM orders WHERE customer_id = kh003";
+$result = $conn->query($sql);
+$orders = $result->fetchAll(PDO::FETCH_ASSOC);
+print_r($orders);
+
+// Lấy danh sách khách hàng và đơn hàng của họ, sử dụng câu lệnh JOIN.
+$sql = "SELECT CUSTOMERS.Customername, orders.total_amount FROM CUSTOMERS JOIN orders ON CUSTOMERS.ID = orders.customer_id";
+$result = $conn->query($sql);
+$data = $result->fetchAll(PDO::FETCH_ASSOC);
+print_r($data);
+
+// Lấy danh sách email của khách
+$sql = "SELECT DISTINCT Email FROM CUSTOMERS";
+$result = $conn->query($sql);
+$emails = $result->fetchAll(PDO::FETCH_COLUMN);
+print_r($emails);
+
+} catch(PDOException $e) {
+echo "Lỗi: " . $e->getMessage();
 }
-$result3=$stsm-> execute($data3);
-if (!$result3) {
-    die("Adding record failed: " . mysqli_error()); 
-    // Thông báo lỗi nếu thực thi câu lệnh thất bại
-} else {
-    echo "History transaction has been add in your data";
-}
-$result4=$stsm-> execute($data4);
-if (!$result4) {
-    die("Adding record failed: " . mysqli_error()); 
-    // Thông báo lỗi nếu thực thi câu lệnh thất bại
-} else {
-    echo "History transaction has been add in your data";
-}
-$result5=$stsm-> execute($data5);
-if (!$result5) {
-    die("Adding record failed: " . mysqli_error()); 
-    // Thông báo lỗi nếu thực thi câu lệnh thất bại
-} else {
-    echo "History transaction has been add in your data";
-};
 
-//Update data
-$stsm = $conn->prepare("UPDATE danhsachsinhvien SET Diem_TB = ?  WHERE masinhvien=?");
-$data = [8.5,'SV001'];
-
-$result=$stsm-> execute($data);
-if (!$result) {
-    die("Adding record failed: " . mysqli_error()); 
-    // Thông báo lỗi nếu thực thi câu lệnh thất bại
-} else {
-    echo "Student's infor has been update in your data";
-};
-
-//Delete data
-$stsm = $conn->prepare("DELETE FROM danhsachsinhvien WHERE masinhvien=?");
-$data = ['SV003'];
-
-$result=$stsm-> execute($data);
-if (!$result) {
-    die("Adding record failed: " . mysqli_error()); 
-// Thông báo lỗi nếu thực thi câu lệnh thất bại
-} else {
-    echo "Student's infor has been delete in your data";
-};
 ?>
