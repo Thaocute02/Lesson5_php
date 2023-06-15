@@ -69,7 +69,7 @@
     };
     //Lấy tất cả các khách hàng có email là "example@gmail.com".
     $sql_stmt = " SELECT * FROM CUSTOMERS WHERE email='example@gmail.com'";
-$result = mysqli_query($dbh,$sql_stmt); 
+    $result = mysqli_query($dbh,$sql_stmt); 
     if (!$result) {
         die("Adding record failed: " . mysqli_error()); 
         // Thông báo lỗi nếu thực thi câu lệnh thất bại
@@ -84,7 +84,7 @@ $result = mysqli_query($dbh,$sql_stmt);
           order_date DATE NOT null,
           FOREIGN KEY(customer_id) REFERENCES CUSTOMERS(ID) ON DELETE CASCADE
 )";
-   $result = mysqli_query($dbh, $sql_stmt);
+    $result = mysqli_query($dbh, $sql_stmt);
       // Thực thi câu lệnh SQL
    
    if (!$result){
@@ -96,7 +96,18 @@ $result = mysqli_query($dbh,$sql_stmt);
    };
     //Thêm một đơn hàng mới vào bảng "orders" cho khách hàng có id là 3.
     $sql_stmt = " INSERT INTO ORDERS (id, customer_id, total_amount, order_date)
-    $sql_stmt .= "VALUES(1, 'kh003', 150.99, '2023-06-07');
-    //
+    $sql_stmt .= "VALUES(1, 'kh003', 90.75, '2023-06-14');
+    $result = mysqli_query($dbh,$sql_stmt); 
+    if (!$result) {
+        die("Adding record failed: " . mysqli_error()); 
+        // Thông báo lỗi nếu thực thi câu lệnh thất bại
+    } else {
+        echo "History transaction has been delete in your data";
+    };
+    //Lấy tất cả các đơn hàng của khách hàng có id là 3.
+     
+    //Lấy danh sách khách hàng và đơn hàng của họ, sử dụng câu lệnh JOIN.
+
+    //Lấy danh sách email của khách hàng, sử dụng hàm DISTINCT.
     mysqli_close($connection);
 ?>
